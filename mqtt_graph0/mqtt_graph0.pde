@@ -2,10 +2,11 @@ import mqtt.*;
 
 final String MQTT_BROKER_URI = "mqtt://broker.hivemq.com";
 final String MQTT_CLIENT_ID = "test";
-final String MQTT_SUBSCRIPTION_00 = "tango3-unic/temp";
+final String MQTT_SUBSCRIPTION_00 = "sika/basic/sensor";
+final String MQTT_SENSOR_00_ATTRIB = "temperature";
 final int MAX_RECORD_COUNT = 100;
 
-final float SENSOR_0_VALUE_SCALE = 20.0f; // 1.0f;
+final float SENSOR_0_VALUE_SCALE = 1.0f; //20.0f;
 final float SENSOR_0_UNNORMALIZED_MIN = 10.0f;
 final float SENSOR_0_UNNORMALIZED_MAX = 30.0f;
 
@@ -113,7 +114,8 @@ void draw()
   //line( MARGIN_X, fY + BAR_HEIGHT, width - MARGIN_X, fY + BAR_HEIGHT );
   
   
-  final float fVNormFac = 1.0f / ( g_fSensor0Max - g_fSensor0Min );
+  final float fDiff = ( g_fSensor0Max - g_fSensor0Min );
+  final float fVNormFac = ( fDiff <= 0.0f ? 1.0f : 1.0f / fDiff );
   final float fBarWidth = ( width - 2 * MARGIN_X ) / ( g_oaRecord.size() );
   
   //fill( 0xAA );
@@ -143,9 +145,6 @@ void draw()
     vertex( fX, fY + fV );
     //rect( fX , fY, BAR_WIDTH, oR.m_fValue * BAR_HEIGHT );
     fX += fBarWidth; //BAR_WIDTH;
-    
-    //if( fX >= width - BAR_WIDTH - MARGIN_X )
-    //  break;
   }
   endShape();
   
@@ -163,13 +162,13 @@ void keyPressed()
 void messageReceived( String sTopic, byte[] abPayload ) //, int qos, boolean retained )
 {
   String sData = new String( abPayload );
-  //println( "message: " + sTopic + " - " + abPayload );
+  println( "message: " + sTopic + " - " + sData );
   
   JSONObject oJSON = parseJSONObject( sData );
   if( oJSON != null )
   {
     //println( oJSON );
-    final float fValue = oJSON.getFloat( "SH" ) * SENSOR_0_VALUE_SCALE;
+    final float fValue = oJSON.getFloat( MQTT_SENSOR_00_ATTRIB ) * SENSOR_0_VALUE_SCALE;
     if( g_oaRecord.size() >= MAX_RECORD_COUNT )
       g_oaRecord.remove( g_oaRecord.size() - 1 );
       
