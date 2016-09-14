@@ -81,7 +81,7 @@ void draw()
   fY += TXT_FONT_SIZE_LARGE * 2.0f;
   textFont( g_oFontSmall );
   text( TXT_SENSOR_00 +
-    " [°C]",
+    " [�C]",
     //" " + g_oaRecord.get( 0 ).m_fValue + " [°C]",
     MARGIN_X, fY );
   fY += TXT_FONT_SIZE_LARGE * 1.0f;
@@ -142,7 +142,7 @@ void draw()
       fV -= SENSOR_0_UNNORMALIZED_MIN;
       fV *= ( BAR_HEIGHT / SENSOR_0_UNNORMALIZED_MAX );
     }
-    fV = BAR_HEIGHT - fV;
+    //fV = BAR_HEIGHT - fV;
     
     vertex( fX, fY + fV );
     //rect( fX , fY, BAR_WIDTH, oR.m_fValue * BAR_HEIGHT );
