@@ -21,7 +21,7 @@ TEMP_MAX = 40.0
 TEMP_COUNT = 100
 
 fig = 0
-xdata = 0
+ydata = 0
 line = 0
 
 # gives connection message
@@ -32,6 +32,7 @@ def on_connect( client, userdata, rc ):
 
 # gives message from device
 def on_message( client, userdata, msg ):
+	global ydata
 	payload = msg.payload.decode( 'UTF-8' )
 	#print( "Topic",msg.topic + "\nMessage: " + payload )
 	
@@ -50,7 +51,7 @@ def on_log( client, userdata, level, buf ):
 
 # add sample value to plot
 def plot_update():
-	global xdata
+	global ydata
 	global line
 	line.set_xdata( np.arange( len( ydata ) ) )
 	line.set_ydata( ydata )  # update the data
