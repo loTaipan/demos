@@ -1,8 +1,10 @@
 import mqtt.*;
 
-final String MQTT_BROKER_URI = "mqtt://broker.hivemq.com";
-final String MQTT_CLIENT_ID = "test";
-final String MQTT_SUBSCRIPTION_00 = "sika/basic/sensor";
+final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
+final String MQTT_USER = "70B3D57ED0000DC2";
+final String MQTT_PASSWORD = "1iULIOYIWsd1Wn2KSRxAzE5m0Xfv17dyo0/D/duktEM=";  
+final String MQTT_CLIENT_ID = "myclientid_" + random( 0, 100 ); //"70B3D57ED0000DC2";
+final String MQTT_SUBSCRIPTION_00 = "+/devices/+/up";
 final String MQTT_SENSOR_00_ATTRIB = "temperature";
 final int MAX_RECORD_COUNT = 100;
 
@@ -48,7 +50,7 @@ boolean g_bDoNormalize = true;
 void setup()
 {
   g_oMQTTClient = new MQTTClient( this );
-  g_oMQTTClient.connect( MQTT_BROKER_URI, MQTT_CLIENT_ID );
+  g_oMQTTClient.connect( MQTT_BROKER_URI, MQTT_CLIENT_ID, true, MQTT_USER, MQTT_PASSWORD );
   g_oMQTTClient.subscribe( MQTT_SUBSCRIPTION_00 );
   
   g_oaRecord = new ArrayList(); // MAX_RECORD_COUNT );
@@ -162,13 +164,13 @@ void keyPressed()
 void messageReceived( String sTopic, byte[] abPayload ) //, int qos, boolean retained )
 {
   String sData = new String( abPayload );
-  println( "message: " + sTopic + " - " + sData );
+  //println( "message: " + sTopic + " - " + sData );
   
   JSONObject oJSON = parseJSONObject( sData );
   if( oJSON != null )
   {
-    //println( oJSON );
-    final float fValue = oJSON.getFloat( MQTT_SENSOR_00_ATTRIB ) * SENSOR_0_VALUE_SCALE;
+    final JSONObject oFields = oJSON.getJSONObject( "fields" );;
+    final float fValue = oFields.getFloat( MQTT_SENSOR_00_ATTRIB ) * SENSOR_0_VALUE_SCALE;
     if( g_oaRecord.size() >= MAX_RECORD_COUNT )
       g_oaRecord.remove( g_oaRecord.size() - 1 );
       
