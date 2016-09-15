@@ -1,4 +1,6 @@
 import mqtt.*;
+import java.text.*; // SimpleDateFormat
+import java.util.Date;
 
 final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
 final String MQTT_USER = "70B3D57ED0000DC2";
@@ -31,13 +33,13 @@ final float BAR_HEIGHT = 300.0f;
 
 class CRecord
 {
-  public CRecord( float v, int t )
+  public CRecord( float v, Date d )
   {
     this.m_fValue = v;
-    this.m_iTime = t;
+    this.m_oDate = d;
   }
   public float m_fValue  ;
-  public int m_iTime;
+  public Date m_oDate;
 }
 
 
@@ -52,6 +54,8 @@ void setup()
   //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
   size( 800, 600 );
   
+   println( new Date() );
+   
   g_oMQTTClient = new MQTTClient( this );
   g_oMQTTClient.connect( MQTT_BROKER_URI, MQTT_CLIENT_ID, true, MQTT_USER, MQTT_PASSWORD );
   g_oMQTTClient.subscribe( MQTT_SUBSCRIPTION_00 );
@@ -175,9 +179,26 @@ void messageReceived( String sTopic, byte[] abPayload ) //, int qos, boolean ret
     final float fValue = oFields.getFloat( MQTT_SENSOR_00_ATTRIB ) * SENSOR_0_VALUE_SCALE;
     if( g_oaRecord.size() >= MAX_RECORD_COUNT )
       g_oaRecord.remove( g_oaRecord.size() - 1 );
-      
-    final int iTime = 0; // todo
-    g_oaRecord.add( 0, new CRecord( fValue, iTime ) );
+    
+    /*
+    final JSONArray oMetaDataArray = oJSON.getJSONArray( "metadata" );
+    final JSONObject oMetaData = oMetaDataArray.getJSONObject( 0 );
+    final String sServerTime = oMetaData.getString( "server_time" );
+    //final String[] sServerTimeSplit = sServerTime.split( "T" );
+    //final String sDate = sServerTimeSplit[0];
+    //final String sTime = sServerTimeSplit[1];
+    //final String[] sTimeHMS = sTime.split( ":" );
+    Date oDate = null;
+    try {
+      oDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS").parse( sServerTime );
+      println( "Date: " + oDate );
+    }
+    catch( ParseException e ) {
+      println( "EXCEPTION: " + e.getMessage() );
+    }
+    */
+    
+    g_oaRecord.add( 0, new CRecord( fValue, new Date() ) );
     
     if( fValue > g_fSensor0Max )
       g_fSensor0Max = fValue;
