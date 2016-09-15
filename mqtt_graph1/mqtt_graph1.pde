@@ -71,7 +71,8 @@ boolean g_bDoNormalize = true;
 void setup()
 {
   //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
-  size( 800, 600 );
+  size( 1280, 1024 );
+  
   
   if( !DEBUG )
   {
@@ -124,6 +125,7 @@ void draw()
     fBottom = SENSOR_0_UNNORMALIZED_MIN;
   }
   
+  scale( width / 800.0f, height / 600.0f );
   
   fill( COLOR_TXT_FILL );
   textAlign( LEFT );
