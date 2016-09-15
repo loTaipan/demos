@@ -2,7 +2,7 @@ import mqtt.*;
 import java.text.*;
 import java.util.Date;
 
-final boolean DEBUG = true;
+final boolean DEBUG = false;
 
 final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
 final String MQTT_USER = "70B3D57ED0000DC2";
@@ -47,7 +47,10 @@ class CRecord
 }
 
 float getTimeValue( Date oDate ) {
-  return oDate.getHours() +
+  int iH = oDate.getHours();
+  if( iH == 0 )
+    iH = 24;
+  return iH +
     ( oDate.getMinutes() + oDate.getSeconds() / 60.0f ) / 60.0f;
 }
 
@@ -71,17 +74,10 @@ boolean g_bDoNormalize = true;
 
 void setup()
 {
-  //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
-  size( 1280, 1024 ); // comment out for fullscreen mode
+  fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
+  //size( 1280, 1024 ); // comment out for fullscreen mode
   
   BAR_HEIGHT = height * 0.8f;
-  
-  if( !DEBUG )
-  {
-    g_oMQTTClient = new MQTTClient( this );
-    g_oMQTTClient.connect( MQTT_BROKER_URI, MQTT_CLIENT_ID, true, MQTT_USER, MQTT_PASSWORD );
-    g_oMQTTClient.subscribe( MQTT_SUBSCRIPTION_00 );
-  }
   
   g_oaRecord = new ArrayList();
   if( DEBUG ) {
@@ -94,7 +90,10 @@ void setup()
       --iM;
       if( iM < 0 )
       {
-        oDate.setHours( oDate.getHours() - 1 );
+        int iH = oDate.getHours() - 1;
+        if ( iH < 0 )
+          iH = 23;
+        oDate.setHours( iH );
         iM = 59;
       }
     }
@@ -102,6 +101,13 @@ void setup()
   
   g_oFontLarge = loadFont( TXT_FONT_LARGE );
   g_oFontSmall = loadFont( TXT_FONT_SMALL );
+  
+  if( !DEBUG )
+  {
+    g_oMQTTClient = new MQTTClient( this );
+    g_oMQTTClient.connect( MQTT_BROKER_URI, MQTT_CLIENT_ID, true, MQTT_USER, MQTT_PASSWORD );
+    g_oMQTTClient.subscribe( MQTT_SUBSCRIPTION_00 );
+  }
 }
 
 
@@ -109,8 +115,6 @@ void draw()
 {
   background( COLOR_BG );
   
-  if( g_oaRecord.isEmpty() )
-    return;
   
   //float fX = MARGIN_X; // width - fMarginX;
   float fY = 50.0f;
@@ -132,12 +136,20 @@ void draw()
   //scale( width / 800.0f, height / 600.0f ); // hack
   
   final String sTitle = TXT_TITLE
-    + String.format( " %1$04d-%2$02d-%3$02d", year(), month(), day() );
+    + String.format( "  /  %1$04d-%2$02d-%3$02d", year(), month(), day() );
   fill( COLOR_TXT_FILL );
   textAlign( LEFT );
   textFont( g_oFontLarge );
   text( sTitle, MARGIN_X, fY );
   fY += TXT_FONT_SIZE_LARGE * 1.5f;
+  
+  if( g_oaRecord.isEmpty() )
+  {
+    textFont( g_oFontSmall );
+    textAlign( CENTER );
+    text( "bitte warten", width/2, height/2 );
+    return;
+  }
   
   textFont( g_oFontSmall );
   textAlign( CENTER );
