@@ -12,10 +12,10 @@ final float SENSOR_0_VALUE_SCALE = 1.0f; //20.0f;
 final float SENSOR_0_UNNORMALIZED_MIN = 10.0f;
 final float SENSOR_0_UNNORMALIZED_MAX = 30.0f;
 
-final int TXT_FILL = 0xAA;
-final int COLOR_FG = TXT_FILL;
+final int COLOR_TXT_FILL = 0xAA;
+final int COLOR_FG = COLOR_TXT_FILL;
 
-final String TXT_TITLE = "limatt f체hler";
+final String TXT_TITLE = "limmat f체hler";
 final String TXT_SENSOR_00 = "temperature";
 //final String TXT_SENSOR_01 = "foo";
 final String TXT_FONT_LARGE = "NotoSans-48.vlw";
@@ -49,6 +49,9 @@ boolean g_bDoNormalize = true;
 
 void setup()
 {
+  //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
+  size( 800, 600 );
+  
   g_oMQTTClient = new MQTTClient( this );
   g_oMQTTClient.connect( MQTT_BROKER_URI, MQTT_CLIENT_ID, true, MQTT_USER, MQTT_PASSWORD );
   g_oMQTTClient.subscribe( MQTT_SUBSCRIPTION_00 );
@@ -56,8 +59,7 @@ void setup()
   g_oaRecord = new ArrayList(); // MAX_RECORD_COUNT );
   //for( int i=0; i<MAX_RECORD_COUNT; ++i )
   //  g_oaRecord.add( new CRecord( 0.0f, 0 ) );
-  
-  size( 800, 600 );
+ 
   
   g_oFontLarge = loadFont( TXT_FONT_LARGE );
   g_oFontSmall = loadFont( TXT_FONT_SMALL );
@@ -74,14 +76,14 @@ void draw()
   float fX = MARGIN_X; // width - fMarginX;
   float fY = 50.0f;
   
-  fill( TXT_FILL );
+  fill( COLOR_TXT_FILL );
   textAlign( LEFT );
   textFont( g_oFontLarge );
   text( TXT_TITLE, MARGIN_X, fY );
   fY += TXT_FONT_SIZE_LARGE * 2.0f;
   textFont( g_oFontSmall );
   text( TXT_SENSOR_00 +
-    " [캜]",
+    " [째C]",
     //" " + g_oaRecord.get( 0 ).m_fValue + " [째C]",
     MARGIN_X, fY );
   fY += TXT_FONT_SIZE_LARGE * 1.0f;
@@ -164,12 +166,12 @@ void keyPressed()
 void messageReceived( String sTopic, byte[] abPayload ) //, int qos, boolean retained )
 {
   String sData = new String( abPayload );
-  //println( "message: " + sTopic + " - " + sData );
+  println( "message: " + sTopic + " - " + sData );
   
   JSONObject oJSON = parseJSONObject( sData );
   if( oJSON != null )
   {
-    final JSONObject oFields = oJSON.getJSONObject( "fields" );;
+    final JSONObject oFields = oJSON.getJSONObject( "fields" );
     final float fValue = oFields.getFloat( MQTT_SENSOR_00_ATTRIB ) * SENSOR_0_VALUE_SCALE;
     if( g_oaRecord.size() >= MAX_RECORD_COUNT )
       g_oaRecord.remove( g_oaRecord.size() - 1 );
