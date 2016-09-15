@@ -125,6 +125,8 @@ void draw()
     fTop = SENSOR_0_UNNORMALIZED_MAX;
     fBottom = SENSOR_0_UNNORMALIZED_MIN;
   }
+  final String sValueTop = String.format( "%1$.1f", fTop );
+  final String sValueBottom = String.format( "%1$.1f", fBottom );
   
   //scale( width / 800.0f, height / 600.0f ); // hack
   
@@ -141,9 +143,9 @@ void draw()
     translate( -fY - BAR_HEIGHT / 2, MARGIN_X - PXL_GAP * 2 ); // -MARGIN_X );
     text( TXT_SENSOR_00, 0, 0 ); //MARGIN_X, fY );
     textAlign( RIGHT );
-    text( fTop, BAR_HEIGHT / 2, 0 );
+    text( sValueTop, BAR_HEIGHT / 2, 0 );
     textAlign( LEFT );
-    text( fBottom, -BAR_HEIGHT / 2, 0 );
+    text( sValueBottom, -BAR_HEIGHT / 2, 0 );
   popMatrix();
   textAlign( LEFT );
   text( "time", width/2, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP * 4 );
