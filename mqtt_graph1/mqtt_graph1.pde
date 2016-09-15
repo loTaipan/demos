@@ -31,7 +31,7 @@ final int TXT_FONT_SIZE_SMALL = 23;
 final float MARGIN_X = 50.0f;
 final float PXL_GAP =  5.0f;
 //final float BAR_WIDTH = 30.0f;
-final float BAR_HEIGHT = 400.0f;
+float BAR_HEIGHT = 400.0f;
 
 
 class CRecord
@@ -70,9 +70,10 @@ boolean g_bDoNormalize = true;
 
 void setup()
 {
-  //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
-  size( 1280, 1024 );
+  fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
+  //size( 1280, 1024 ); // comment out for fullscreen mode
   
+  BAR_HEIGHT = height * 0.8;
   
   if( !DEBUG )
   {
@@ -125,7 +126,7 @@ void draw()
     fBottom = SENSOR_0_UNNORMALIZED_MIN;
   }
   
-  scale( width / 800.0f, height / 600.0f );
+  //scale( width / 800.0f, height / 600.0f ); // hack
   
   fill( COLOR_TXT_FILL );
   textAlign( LEFT );
@@ -137,12 +138,12 @@ void draw()
   textAlign( CENTER );
   pushMatrix();
     rotate( -PI / 2 );
-    translate( -height/2, MARGIN_X - PXL_GAP * 2 ); // -MARGIN_X );
+    translate( -fY - BAR_HEIGHT / 2, MARGIN_X - PXL_GAP * 2 ); // -MARGIN_X );
     text( TXT_SENSOR_00, 0, 0 ); //MARGIN_X, fY );
-    textAlign( CENTER );
-    text( fTop, 150.0f, 0 );
-    textAlign( CENTER );
-    text( fBottom, -200.0f, 0 );
+    textAlign( RIGHT );
+    text( fTop, BAR_HEIGHT / 2, 0 );
+    textAlign( LEFT );
+    text( fBottom, -BAR_HEIGHT / 2, 0 );
   popMatrix();
   textAlign( LEFT );
   text( "time", width/2, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP );
@@ -162,9 +163,9 @@ void draw()
   final String sTimeLeft = String.format( "%1$02d:%2$02d", iHLeft, iM );
   final String sTimeRight = String.format( "%1$02d:%2$02d", iHRight, iM );
   textAlign( LEFT );
-  text( sTimeLeft, MARGIN_X, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP );
+  text( sTimeLeft, MARGIN_X, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP * 4 );
   textAlign( RIGHT );
-  text( sTimeRight, width - MARGIN_X, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP );
+  text( sTimeRight, width - MARGIN_X, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP * 4 );
   
   
   
@@ -183,6 +184,16 @@ void draw()
   //line( MARGIN_X, fY, width - MARGIN_X, fY );
   line( GRAPH_X_MIN, fY + BAR_HEIGHT, GRAPH_X_MAX, fY + BAR_HEIGHT ); // horizontal
   line( GRAPH_X_MIN, fY + BAR_HEIGHT, GRAPH_X_MIN, fY ); // vertical
+  
+  final int iMinute = oNow.getMinutes();
+  for( int m=0; m<=60; ++m )
+  {
+    final int mm = iMinute + m;
+    final float fLength = ( mm % 5 != 0 ? 5.0f : ( mm % 15 != 0 ? 10.0f : 15.0f ) );
+    final float fXX = GRAPH_X_MIN + m * GRAPH_X_WIDTH / 60;
+    final float fYY = fY + BAR_HEIGHT;
+    line( fXX, fYY, fXX, fYY + fLength );
+  }
   
   final float fDiff = ( g_fSensor0Max - g_fSensor0Min );
   final float fVNormFac = ( fDiff <= 0.0f ? 1.0f : 1.0f / fDiff );
