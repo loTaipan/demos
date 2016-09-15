@@ -2,7 +2,7 @@ import mqtt.*;
 import java.text.*;
 import java.util.Date;
 
-final boolean DEBUG = false;
+final boolean DEBUG = true;
 
 final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
 final String MQTT_USER = "70B3D57ED0000DC2";
@@ -20,8 +20,9 @@ final int COLOR_BG = 0x11;
 final int COLOR_TXT_FILL = 0xCC;
 final int COLOR_FG = COLOR_TXT_FILL;
 
-final String TXT_TITLE = "limmat fühler";
-final String TXT_SENSOR_00 = "temperature [°C]";
+final String TXT_TITLE = "Limmat Fühler";
+final String TXT_SENSOR_00 = "Temperatur [°C]";
+final String TXT_X_AXIS = "Zeit";
 //final String TXT_SENSOR_01 = "foo";
 final String TXT_FONT_LARGE = "NotoSans-48.vlw";
 final String TXT_FONT_SMALL = "NotoSans-23.vlw";
@@ -73,7 +74,7 @@ void setup()
   //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
   size( 1280, 1024 ); // comment out for fullscreen mode
   
-  BAR_HEIGHT = height * 0.8;
+  BAR_HEIGHT = height * 0.8f;
   
   if( !DEBUG )
   {
@@ -130,10 +131,12 @@ void draw()
   
   //scale( width / 800.0f, height / 600.0f ); // hack
   
+  final String sTitle = TXT_TITLE
+    + String.format( " %1$04d-%2$02d-%3$02d", year(), month(), day() );
   fill( COLOR_TXT_FILL );
   textAlign( LEFT );
   textFont( g_oFontLarge );
-  text( TXT_TITLE, MARGIN_X, fY );
+  text( sTitle, MARGIN_X, fY );
   fY += TXT_FONT_SIZE_LARGE * 1.5f;
   
   textFont( g_oFontSmall );
@@ -148,7 +151,7 @@ void draw()
     text( sValueBottom, -BAR_HEIGHT / 2, 0 );
   popMatrix();
   textAlign( LEFT );
-  text( "time", width/2, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP * 4 );
+  text( TXT_X_AXIS, width/2, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP * 4 );
   
   //textAlign( RIGHT );
   //textFont( g_oFontSmall );
