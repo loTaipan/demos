@@ -2,7 +2,7 @@ import mqtt.*;
 import java.text.*;
 import java.util.Date;
 
-final boolean DEBUG = true;
+final boolean DEBUG = false;
 
 final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
 final String MQTT_USER = "70B3D57ED0000DC2";
@@ -12,7 +12,7 @@ final String MQTT_SUBSCRIPTION_00 = "+/devices/+/up";
 final String MQTT_SENSOR_00_ATTRIB = "temperature";
 final int MAX_RECORD_COUNT = 100;
 
-final float SENSOR_0_VALUE_SCALE = 1.0f; //20.0f;
+final float SENSOR_0_VALUE_SCALE = 1.0f;//20.0f;
 final float SENSOR_0_UNNORMALIZED_MIN = 10.0f;
 final float SENSOR_0_UNNORMALIZED_MAX = 30.0f;
 
@@ -70,8 +70,8 @@ boolean g_bDoNormalize = true;
 
 void setup()
 {
-  fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
-  //size( 1280, 1024 ); // comment out for fullscreen mode
+  //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
+  size( 1280, 1024 ); // comment out for fullscreen mode
   
   BAR_HEIGHT = height * 0.8;
   
@@ -146,7 +146,7 @@ void draw()
     text( fBottom, -BAR_HEIGHT / 2, 0 );
   popMatrix();
   textAlign( LEFT );
-  text( "time", width/2, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP );
+  text( "time", width/2, fY + BAR_HEIGHT + TXT_FONT_SIZE_SMALL + PXL_GAP * 4 );
   
   //textAlign( RIGHT );
   //textFont( g_oFontSmall );
@@ -172,7 +172,7 @@ void draw()
   final float GRAPH_X_MIN = MARGIN_X;
   final float GRAPH_X_MAX = width - MARGIN_X;
   final float GRAPH_X_WIDTH = GRAPH_X_MAX - GRAPH_X_MIN;
-
+  
   noFill();
   stroke( COLOR_FG );
   strokeWeight( 2.0f );
@@ -332,4 +332,4 @@ void dashline(float x0, float y0, float x1, float y1, float[ ] spacing)
       drawLine = !drawLine;  // switch between dash and gap 
     } 
   } 
-} 
+}
