@@ -20,7 +20,8 @@ final int COLOR_BG = 0x11;
 final int COLOR_TXT_FILL = 0xDD;
 final int COLOR_FG = COLOR_TXT_FILL;
 
-final String TXT_TITLE = "Limmat Fühler";
+final String TXT_TITLE = "Limmat-Temperatur";
+final String TXT_TITLE_SUB= "lotaipan.com";
 final String TXT_SENSOR_00 = "Temperatur [°C]";
 final String TXT_X_AXIS = "Zeit";
 //final String TXT_SENSOR_01 = "foo";
@@ -74,7 +75,7 @@ boolean g_bDoNormalize = true;
 void setup()
 {
   fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
-  //size( 1280, 1024 ); // comment out for fullscreen mode
+  //size( 800, 600 ); // comment out for fullscreen mode
   
   BAR_HEIGHT = height * 0.8f;
   
@@ -136,13 +137,18 @@ void draw()
   
   //scale( width / 800.0f, height / 600.0f ); // hack
   
-  final String sTitle = TXT_TITLE
-    + String.format( "  /  %1$04d-%2$02d-%3$02d", year(), month(), day() );
+  final String sTitle = TXT_TITLE;
+  //  + String.format( "  /  %1$04d-%2$02d-%3$02d", year(), month(), day() );
   fill( COLOR_TXT_FILL );
   textAlign( LEFT );
   textFont( g_oFontLarge );
   text( sTitle, MARGIN_X, fY );
-  fY += TXT_FONT_SIZE_LARGE * 1.5f;
+  fY += TXT_FONT_SIZE_LARGE * 1.0f;
+  
+  textFont( g_oFontSmall );
+  text( TXT_TITLE_SUB, MARGIN_X, fY );
+  fY += TXT_FONT_SIZE_LARGE * 1.0f;
+  
   
   if( g_oaRecord.isEmpty() )
   {
