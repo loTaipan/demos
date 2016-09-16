@@ -2,7 +2,7 @@ import mqtt.*;
 import java.text.*;
 import java.util.Date;
 
-final boolean DEBUG = false;
+final boolean DEBUG = true;
 
 final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
 final String MQTT_USER = "70B3D57ED0000DC2";
@@ -20,7 +20,7 @@ final int COLOR_BG = 0x11;
 final int COLOR_TXT_FILL = 0xDD;
 final int COLOR_FG = COLOR_TXT_FILL;
 
-final String TXT_TITLE = "Limmat-Temperatur";
+final String TXT_TITLE = "Limmat-Temperatur:";
 final String TXT_TITLE_SUB= "lotaipan.com";
 final String TXT_SENSOR_00 = "Temperatur [°C]";
 final String TXT_X_AXIS = "Zeit";
@@ -137,7 +137,17 @@ void draw()
   
   //scale( width / 800.0f, height / 600.0f ); // hack
   
-  final String sTitle = TXT_TITLE;
+  
+  
+  if( g_oaRecord.isEmpty() )
+  {
+    textFont( g_oFontSmall );
+    textAlign( CENTER );
+    text( "bitte warten", width/2, height/2 );
+    return;
+  }
+  
+  final String sTitle = TXT_TITLE + String.format( " %1$.1f °C", g_oaRecord.get(g_oaRecord.size()-1).m_fValue );
   //  + String.format( "  /  %1$04d-%2$02d-%3$02d", year(), month(), day() );
   fill( COLOR_TXT_FILL );
   textAlign( LEFT );
@@ -150,13 +160,6 @@ void draw()
   fY += TXT_FONT_SIZE_LARGE * 1.0f;
   
   
-  if( g_oaRecord.isEmpty() )
-  {
-    textFont( g_oFontSmall );
-    textAlign( CENTER );
-    text( "bitte warten", width/2, height/2 );
-    return;
-  }
   
   textFont( g_oFontSmall );
   textAlign( CENTER );
