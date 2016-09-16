@@ -83,7 +83,9 @@ void setup()
     int iM = oDate.getMinutes();
     for( int i=0; i<MAX_RECORD_COUNT; ++i ) {
       //println( "debug: " + iM + " - " + oDate );
-      addRecord( random( 10.0f, 30.0f ), oDate );
+      addRecord(
+      random( 20.0f, 30.0f ),
+        oDate );
       oDate.setMinutes( iM );
       --iM;
       if( iM < 0 )
@@ -213,7 +215,18 @@ void draw()
     line( fXX, fYY, fXX, fYY + fLength );
   }
   
-  final float fDiff = ( g_fSensor0Max - g_fSensor0Min );
+  float fMin, fMax;
+  if( g_bDoNormalize )
+  {
+    fMin = g_fSensor0Min;
+    fMax = g_fSensor0Max;
+  }
+  else
+  {
+    fMin = SENSOR_0_UNNORMALIZED_MIN;
+    fMax = SENSOR_0_UNNORMALIZED_MAX;
+  }
+  final float fDiff = ( fMax - fMin );
   final float fVNormFac = ( fDiff <= 0.0f ? 1.0f : 1.0f / fDiff );
   final float fBarWidth = ( width - 2 * MARGIN_X ) / ( g_oaRecord.size() );
   
@@ -228,18 +241,10 @@ void draw()
   {
     float fV = oR.m_fValue;
     
-    if( g_bDoNormalize )
-    {
-      fV -= g_fSensor0Min;
-      fV *= fVNormFac;
-      fV *= BAR_HEIGHT;
-    }
-    else
-    {
-      fV -= SENSOR_0_UNNORMALIZED_MIN;
-      fV *= ( BAR_HEIGHT / SENSOR_0_UNNORMALIZED_MAX );
-    }
-    //fV = BAR_HEIGHT - fV;
+    fV -= fMin;
+    fV *= fVNormFac;
+    fV *= BAR_HEIGHT;
+    fV = BAR_HEIGHT - fV;
     
     final float fT = ( fTNow - getTimeValue( oR.m_oDate ) );
     if( fT < 0.0f || fT > 1.0f )
