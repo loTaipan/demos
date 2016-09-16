@@ -2,7 +2,7 @@ import mqtt.*;
 import java.text.*;
 import java.util.Date;
 
-final boolean DEBUG = false;
+final boolean DEBUG = true;
 
 final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
 final String MQTT_USER = "70B3D57ED0000DC2";
@@ -48,8 +48,6 @@ class CRecord
 
 float getTimeValue( Date oDate ) {
   int iH = oDate.getHours();
-  if( iH == 0 )
-    iH = 24;
   return iH +
     ( oDate.getMinutes() + oDate.getSeconds() / 60.0f ) / 60.0f;
 }
@@ -74,8 +72,8 @@ boolean g_bDoNormalize = true;
 
 void setup()
 {
-  fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
-  //size( 1280, 1024 ); // comment out for fullscreen mode
+  //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
+  size( 1280, 1024 ); // comment out for fullscreen mode
   
   BAR_HEIGHT = height * 0.8f;
   
@@ -84,7 +82,7 @@ void setup()
     Date oDate = new Date();
     int iM = oDate.getMinutes();
     for( int i=0; i<MAX_RECORD_COUNT; ++i ) {
-      //println( "debug: " + oDate );
+      //println( "debug: " + iM + " - " + oDate );
       addRecord( random( 10.0f, 30.0f ), oDate );
       oDate.setMinutes( iM );
       --iM;
@@ -172,7 +170,10 @@ void draw()
   
   
   final Date oNow = new Date();
-  final float fTNow = getTimeValue( oNow );
+  float fTNow = getTimeValue( oNow );
+  if( oNow.getHours() == 0 ) {
+    fTNow += 24.0f;
+  }
   
   final int iHRight = oNow.getHours();
   final int iHLeft = ( iHRight == 0 ? 23 : iHRight - 1 ); // 1 hour
