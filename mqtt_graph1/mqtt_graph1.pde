@@ -2,7 +2,7 @@ import mqtt.*;
 import java.text.*;
 import java.util.Date;
 
-final boolean DEBUG = true;
+final boolean DEBUG = false;
 
 final String MQTT_BROKER_URI = "mqtt://staging.thethingsnetwork.org:1883";
 final String MQTT_USER = "70B3D57ED0000DC2";
@@ -17,7 +17,7 @@ final float SENSOR_0_UNNORMALIZED_MIN = 10.0f;
 final float SENSOR_0_UNNORMALIZED_MAX = 30.0f;
 
 final int COLOR_BG = 0x11;
-final int COLOR_TXT_FILL = 0xCC;
+final int COLOR_TXT_FILL = 0xDD;
 final int COLOR_FG = COLOR_TXT_FILL;
 
 final String TXT_TITLE = "Limmat Fühler";
@@ -34,6 +34,7 @@ final float PXL_GAP =  5.0f;
 //final float BAR_WIDTH = 30.0f;
 float BAR_HEIGHT = 400.0f;
 
+boolean g_bDrawFilled = false;
 
 class CRecord
 {
@@ -72,8 +73,8 @@ boolean g_bDoNormalize = true;
 
 void setup()
 {
-  //fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
-  size( 1280, 1024 ); // comment out for fullscreen mode
+  fullScreen( 1 ); // uncomment to run sketch in fullscreen mode
+  //size( 1280, 1024 ); // comment out for fullscreen mode
   
   BAR_HEIGHT = height * 0.8f;
   
@@ -230,10 +231,14 @@ void draw()
   final float fVNormFac = ( fDiff <= 0.0f ? 1.0f : 1.0f / fDiff );
   final float fBarWidth = ( width - 2 * MARGIN_X ) / ( g_oaRecord.size() );
   
-  //fill( 0xAA );
-  //noStroke();
-  noFill();
-  stroke( COLOR_FG );
+  if( g_bDrawFilled ) {
+    fill( COLOR_FG );
+    noStroke();
+  }
+  else {
+    noFill();
+    stroke( COLOR_FG );
+  }
   strokeWeight( 2.0f );
   strokeJoin( ROUND );
   beginShape();
@@ -255,13 +260,28 @@ void draw()
     //rect( fX , fY, BAR_WIDTH, oR.m_fValue * BAR_HEIGHT );
     //fX += fBarWidth; //BAR_WIDTH;
   }
-  endShape();
+  if( g_bDrawFilled ) {
+    vertex( GRAPH_X_MAX, fY + BAR_HEIGHT );
+    vertex( GRAPH_X_MIN, fY + BAR_HEIGHT );
+    endShape(CLOSE);
+  }
+  else {
+    endShape();
+  }
 }
 
 
 void keyPressed()
 {
-  g_bDoNormalize = !g_bDoNormalize;
+  switch( key )
+  {
+  case ' ':
+    g_bDoNormalize = !g_bDoNormalize;
+  break;
+  case 'f':
+    g_bDrawFilled = !g_bDrawFilled;
+  break;
+  }
 }
 
 
