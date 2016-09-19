@@ -147,7 +147,7 @@ void draw()
     return;
   }
   
-  final String sTitle = TXT_TITLE + String.format( " %1$.1f °C", g_oaRecord.get(g_oaRecord.size()-1).m_fValue );
+  final String sTitle = TXT_TITLE + String.format( " %1$.1f °C", g_oaRecord.get(0).m_fValue );
   //  + String.format( "  /  %1$04d-%2$02d-%3$02d", year(), month(), day() );
   fill( COLOR_TXT_FILL );
   textAlign( LEFT );
